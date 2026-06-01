@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="bootstrap.min.css" />
+    <link rel="stylesheet" href="bootstrap-icons.min.css" />
+    <style>
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+        html,
+        body {
+            -ms-overflow-style: none;
+            /* IE dan Edge lama */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="navbar flex-column mt-3 mb-3 justify-content-center">
+            <h1 class="display-5">Ebike Monitoring Tool</h1>
+            <small> Copyright &copy; 2026 Rumah Vokasi Polytron</small>
+        </div>
+
+        <div class="accordion mb-3" id="accordionExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseFive" aria-expanded="true" aria-controls="collapseFive">
+                        <i class="bi bi-disc me-3"></i>Koneksi
+                    </button>
+                </h2>
+                <div id="collapseFive" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <div id="loadingAlert" class="alert alert-warning d-none" role="alert">
+                            Menghubungkan ...
+                        </div>
+                        <div class="d-grid">
+                            <button id="bleBtn" class="btn btn-primary" type="button">
+                                Sambungkan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        <i class="bi bi-cpu me-3"></i>ECU - Kontroler
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <div id="ecuError" class="alert alert-danger d-none" role="alert">
+                            <i class="bi bi-exclamation-circle me-2"></i>ERROR 0x01 - Hall
+                            Sensor Fail
+                        </div>
+                        <div class="row g-2 mt-1 mb-4">
+                            <div class="col-6 col-md-2">
+                                <button id="ecuPark" class="btn btn-outline-secondary w-100" disabled>
+                                    Park
+                                </button>
+                            </div>
+                            <div class="col-6 col-md-2">
+                                <button id="ecuStand" class="btn btn-outline-secondary w-100" disabled>
+                                    Stand
+                                </button>
+                            </div>
+                            <div class="col-6 col-md-2">
+                                <button id="ecuBrake" class="btn btn-outline-secondary w-100" disabled>
+                                    Brake
+                                </button>
+                            </div>
+                            <div class="col-6 col-md-2">
+                                <button id="ecuDrive" class="btn btn-outline-secondary w-100" disabled>
+                                    Drive
+                                </button>
+                            </div>
+                            <div class="col-6 col-md-2">
+                                <button id="ecuSport" class="btn btn-outline-secondary w-100" disabled>
+                                    Sport
+                                </button>
+                            </div>
+                            <div class="col-6 col-md-2">
+                                <button id="ecuReverse" class="btn btn-outline-secondary w-100" disabled>
+                                    Reverse
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="card text-center mb-3">
+                                    <div class="card-header">RPM</div>
+                                    <div class="card-body">
+                                        <div id="ecuRpm" class="display-1">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="card text-center mb-3">
+                                    <div class="card-header">Kecepatan - KmpH</div>
+                                    <div class="card-body">
+                                        <div id="ecuKmph" class="display-1">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="card text-center mb-3">
+                                    <div class="card-header">Suhu Kontroler - &deg;C</div>
+                                    <div class="card-body">
+                                        <div id="ecuCtrlTemp" class="display-1">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="card text-center mb-3">
+                                    <div class="card-header">Suhu BLDC - &deg;C</div>
+                                    <div class="card-body">
+                                        <div id="ecuMtrTemp" class="display-1">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                        <i class="bi bi-bar-chart-fill me-3"></i>Baterai
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <div class="row">
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="card text-center mb-3">
+                                    <div class="card-header">SoC - %</div>
+                                    <div class="card-body">
+                                        <div id="battSoc" class="display-1">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="card text-center mb-3">
+                                    <div class="card-header">SoH - %</div>
+                                    <div class="card-body">
+                                        <div id="battSoh" class="display-1">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="card text-center mb-3">
+                                    <div class="card-header">Tegangan - V</div>
+                                    <div class="card-body">
+                                        <div id="battVolt" class="display-1">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="card text-center mb-3">
+                                    <div class="card-header">Arus - A</div>
+                                    <div class="card-body">
+                                        <div id="battAmp" class="display-1">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="card text-center mb-3">
+                                    <div class="card-header">Cell Min - V</div>
+                                    <div class="card-body">
+                                        <div id="battCellMin" class="display-1">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="card text-center mb-3">
+                                    <div class="card-header">Cell Max - V</div>
+                                    <div class="card-body">
+                                        <div id="battCellMax" class="display-1">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="card text-center mb-3">
+                                    <div class="card-header">Cell AVG - V</div>
+                                    <div class="card-body">
+                                        <div id="battCellAvg" class="display-1">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="card text-center mb-3">
+                                    <div class="card-header">Cell Different - V</div>
+                                    <div class="card-body">
+                                        <div id="battCellDiff" class="display-1">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="card text-center mb-3">
+                                    <div class="card-header">Suhu - &deg;C</div>
+                                    <div class="card-body">
+                                        <div id="battTemp" class="display-1">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="card text-center mb-3">
+                                    <div class="card-header">Cycle Count</div>
+                                    <div class="card-body">
+                                        <div id="battCycle" class="display-1">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card text-center mb-3">
+                            <div class="card-header">Kapasitas Baterai - Kwh</div>
+                            <div class="card-body">
+                                <div class="progress" style="height: 30px">
+                                    <div id="battCap" class="progress-bar bg-success" role="progressbar"
+                                        style="width: 100%">
+                                        -
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card text-center mb-3">
+                            <div class="card-header">Tegangan Cell</div>
+                            <div class="card-body font-monospace">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">01</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC01Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC01Text" class="ms-3">0.00</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">02</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC02Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC02Text" class="ms-3">0.00</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">03</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC03Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC03Text" class="ms-3">0.00</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">04</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC04Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC04Text" class="ms-3">0.00</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">05</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC05Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC05Text" class="ms-3">0.00</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">06</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC06Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC06Text" class="ms-3">0.00</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">07</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC07Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC07Text" class="ms-3">0.00</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">08</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC08Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC08Text" class="ms-3">0.00</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">09</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC09Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC09Text" class="ms-3">0.00</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">10</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC10Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC10Text" class="ms-3">0.00</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">11</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC11Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC11Text" class="ms-3">0.00</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">12</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC12Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC12Text" class="ms-3">0.00</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">13</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC13Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC13Text" class="ms-3">0.00</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">14</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC14Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC14Text" class="ms-3">0.00</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">15</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC15Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC15Text" class="ms-3">0.00</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">16</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC16Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC16Text" class="ms-3">0.00</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">17</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC17Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC17Text" class="ms-3">0.00</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">18</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC18Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC18Text" class="ms-3">0.00</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">19</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC19Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC19Text" class="ms-3">0.00</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">20</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC20Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC20Text" class="ms-3">0.00</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">21</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC21Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC21Text" class="ms-3">0.00</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">22</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC22Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC22Text" class="ms-3">0.00</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">23</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC23Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC23Text" class="ms-3">0.00</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-3">24</div>
+                                    <div class="progress flex-grow-1" style="height: 20px">
+                                        <div id="battC24Bar" class="progress-bar bg-success" role="progressbar"
+                                            style="width: 0%">
+                                        </div>
+                                    </div>
+                                    <div id="battC24Text" class="ms-3">0.00</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+                        <i class="bi bi-ev-station-fill me-3"></i>Pengisian Daya
+                    </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <div class="row">
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="card text-center mb-3">
+                                    <div class="card-header">Tegangan - V</div>
+                                    <div class="card-body">
+                                        <div id="chargerVoltage" class="display-1">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="card text-center mb-3">
+                                    <div class="card-header">Arus - A</div>
+                                    <div class="card-body">
+                                        <div id="chargerCurrent" class="display-1">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
+                        <i class="bi bi-table me-3"></i>Log Data
+                    </button>
+                </h2>
+                <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <table id="logTable" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Len</th>
+                                    <th scope="col">Data</th>
+                                </tr>
+                            </thead>
+                            <tbody class="font-monospace">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="bootstrap.bundle.min.js"></script>
+    <script src="ble.js"></script>
+</body>
+
+</html>
