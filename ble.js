@@ -331,8 +331,11 @@ function handleNotify(event) {
 let device = null;
 let connected = false;
 
-const service_uuid = "19b10000-e8f2-537e-4f6c-d104768a1214";
-const characteristic_uuid = "19b10001-e8f2-537e-4f6c-d104768a1214";
+// const service_uuid = "19b10000-e8f2-537e-4f6c-d104768a1214";
+// const characteristic_uuid = "19b10001-e8f2-537e-4f6c-d104768a1214";
+
+const service_uuid = "12345678-1234-1234-1234-1234567890ab";
+const characteristic_uuid = "87654321-4321-4321-4321-ba0987654321";
 
 const blebtn = document.getElementById("bleBtn");
 const loading = document.getElementById("loadingAlert");
