@@ -350,9 +350,13 @@ blebtn.addEventListener("click", async () => {
         try {
 
 
+            // device = await navigator.bluetooth.requestDevice({
+            //     acceptAllDevices: true,
+            //     optionalServices: [service_uuid],
+            // });
+
             device = await navigator.bluetooth.requestDevice({
-                acceptAllDevices: true,
-                optionalServices: [service_uuid],
+                filters: [{ services: [service_uuid] }]
             });
 
             loading.classList.remove("d-none");
