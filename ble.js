@@ -107,9 +107,17 @@ function updateGenData(payload, len) {
     if (len < 8) return;
 
     let voltage = ((payload[0] << 8) | payload[1]) * 0.1;
-    let current = ((payload[2] << 8) | payload[3]) * 0.1;
+    // let current = ((payload[2] << 8) | payload[3]) * 0.1;
     let remainCap = ((payload[4] << 8) | payload[5]) * 0.1;
     let fullCap = ((payload[6] << 8) | payload[7]) * 0.1;
+
+    let iRawU = (payload[2] << 8) | payload[3];
+    let iRawS = (iRawU & 0x8000) ? iRawU - 0x10000 : iRawU;
+    let current = iRawS * 0.1;
+
+    if (Math.abs(current) < 0.2) {
+        current = 0;
+    }
 
     let percentage = remainCap / fullCap * 100;
 
@@ -173,7 +181,7 @@ function updateBattCell(pos, voltage) {
     const battText = document.getElementById(`battC${idx}Text`);
 
     let percentage = voltage / 4.200 * 100;
-    battText.textContent = voltage.toFixed(2);
+    battText.textContent = voltage.toFixed(3);
     battBar.style.width = percentage + "%";
 }
 
