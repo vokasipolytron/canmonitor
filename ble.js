@@ -186,7 +186,7 @@ function updateBattCell(pos, voltage) {
 }
 
 function updateBattCellVoltData(payload, len, index) {
-    // if (len < 8) return;
+    if (len < 6) return;
 
     for (let i = 0; i < 4; i++) {
         let voltage = ((payload[i * 2] << 8) | payload[(i * 2) + 1]) * 0.001;
